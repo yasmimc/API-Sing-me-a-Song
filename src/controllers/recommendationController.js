@@ -2,6 +2,7 @@ import * as schemas from '../validations/schemas.js';
 import * as recommendationService from '../services/recommendationService.js';
 import UrlError from '../errors/UrlError.js';
 import RecommendationIdError from '../errors/RecommendationIdError.js';
+import NoRecommendationError from '../errors/NoRecommendationError.js';
 
 async function addRecommendation(req, res) {
     try {
@@ -49,4 +50,22 @@ async function downvoteRecommendation(req, res) {
     }
 }
 
-export { addRecommendation, upvoteRecommendation, downvoteRecommendation };
+async function getRandomRecommendations(req, res) {
+    try {
+        const recommendation =
+            await recommendationService.getRandomRecommendation();
+        res.status(200).send(recommendation);
+    } catch (error) {
+        if (error instanceof NoRecommendationError) {
+            return res.status(404).send(error.message);
+        }
+        res.sendStatus(500);
+    }
+}
+
+export {
+    addRecommendation,
+    upvoteRecommendation,
+    downvoteRecommendation,
+    getRandomRecommendations,
+};

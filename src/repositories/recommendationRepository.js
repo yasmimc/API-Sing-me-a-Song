@@ -18,4 +18,9 @@ async function editScore({ id, scoreUpdate }) {
     }
 }
 
-export { save, editScore };
+async function getRecommendations() {
+    const result = await connection.query(`SELECT * FROM recommendations;`);
+    return result.rows;
+}
+
+export { save, editScore, getRecommendations };

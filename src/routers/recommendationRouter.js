@@ -8,10 +8,13 @@ router.post(
     '/recommendations/:id/upvote',
     recommendationController.upvoteRecommendation
 );
-
 router.post(
     '/recommendations/:id/downvote',
     recommendationController.downvoteRecommendation
+);
+router.get(
+    '/recommendations/random',
+    recommendationController.getRandomRecommendations
 );
 
 export default router;
