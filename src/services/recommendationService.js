@@ -10,4 +10,8 @@ async function saveRecommendation({ name, youtubeLink }) {
     await recommendationRepository.save({ name, youtubeLink });
 }
 
-export { saveRecommendation };
+async function upvoteRecommendation({ id }) {
+    await recommendationRepository.editScore({ id, scoreUpdate: '+ 1' });
+}
+
+export { saveRecommendation, upvoteRecommendation };

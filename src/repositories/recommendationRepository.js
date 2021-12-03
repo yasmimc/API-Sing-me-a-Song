@@ -7,4 +7,11 @@ async function save({ name, youtubeLink }) {
     );
 }
 
-export { save };
+async function editScore({ id, scoreUpdate }) {
+    const result = await connection.query(
+        `UPDATE recommendations SET score = score ${scoreUpdate} WHERE id = $1`,
+        [id]
+    );
+}
+
+export { save, editScore };

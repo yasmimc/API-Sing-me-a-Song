@@ -22,4 +22,15 @@ async function addRecommendation(req, res) {
     }
 }
 
-export { addRecommendation };
+async function upvoteRecommendation(req, res) {
+    try {
+        const { id } = req.params;
+        await recommendationService.upvoteRecommendation({ id });
+        res.sendStatus(200);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+}
+
+export { addRecommendation, upvoteRecommendation };
