@@ -14,4 +14,8 @@ async function upvoteRecommendation({ id }) {
     await recommendationRepository.editScore({ id, scoreUpdate: '+ 1' });
 }
 
-export { saveRecommendation, upvoteRecommendation };
+async function downvoteRecommendation({ id }) {
+    await recommendationRepository.editScore({ id, scoreUpdate: '- 1' });
+}
+
+export { saveRecommendation, upvoteRecommendation, downvoteRecommendation };

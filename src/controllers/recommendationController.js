@@ -1,6 +1,7 @@
 import * as schemas from '../validations/schemas.js';
 import * as recommendationService from '../services/recommendationService.js';
 import UrlError from '../errors/UrlError.js';
+import RecommendationIdError from '../errors/RecommendationIdError.js';
 
 async function addRecommendation(req, res) {
     try {
@@ -28,9 +29,24 @@ async function upvoteRecommendation(req, res) {
         await recommendationService.upvoteRecommendation({ id });
         res.sendStatus(200);
     } catch (error) {
-        console.log(error);
+        if (error instanceof RecommendationIdError) {
+            return res.status(404).send(error.message);
+        }
         res.sendStatus(500);
     }
 }
 
-export { addRecommendation, upvoteRecommendation };
+async function downvoteRecommendation(req, res) {
+    try {
+        const { id } = req.params;
+        await recommendationService.downvoteRecommendation({ id });
+        res.sendStatus(200);
+    } catch (error) {
+        if (error instanceof RecommendationIdError) {
+            return res.status(404).send(error.message);
+        }
+        res.sendStatus(500);
+    }
+}
+
+export { addRecommendation, upvoteRecommendation, downvoteRecommendation };

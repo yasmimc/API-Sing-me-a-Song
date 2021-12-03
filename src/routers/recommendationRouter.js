@@ -9,4 +9,9 @@ router.post(
     recommendationController.upvoteRecommendation
 );
 
+router.post(
+    '/recommendations/:id/downvote',
+    recommendationController.downvoteRecommendation
+);
+
 export default router;
