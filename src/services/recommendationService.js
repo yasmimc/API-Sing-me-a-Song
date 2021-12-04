@@ -19,27 +19,33 @@ async function downvoteRecommendation({ id }) {
     await recommendationRepository.editScore({ id, scoreUpdate: '- 1' });
 }
 
-async function getRandomRecommendation() {
-    const recommendations = await recommendationRepository.getRecommendations();
+async function getAllRecommendations(amount) {
+    const recommendations = await recommendationRepository.getRecommendations(
+        amount
+    );
     const validRecommendations = getValidRecommendations({ recommendations });
+    return validRecommendations;
+}
 
-    if (validRecommendations.length === 1) {
+async function getRandomRecommendation() {
+    const recommendations = await getAllRecommendations();
+    if (recommendations.length === 1) {
         return recommendations[0];
     }
 
-    if (validRecommendations.length === 0) {
+    if (recommendations.length === 0) {
         throw new NoRecommendationError('Sorry, any recommendation today :(');
     }
 
     const random = parseInt(Math.random() * 10);
     if (random < 7) {
         return getRandomRecommendationByScore({
-            recommendations: validRecommendations,
+            recommendations,
             minScore: 11,
         });
     }
     return getRandomRecommendationByScore({
-        recommendations: validRecommendations,
+        recommendations,
         minScore: -5,
         maxScore: 10,
     });
@@ -73,9 +79,19 @@ function getRandomRecommendationByScore({
     return filteredRecommendations[random];
 }
 
+async function getTopRecommendations(amount) {
+    const allRecommendations = await getAllRecommendations(amount);
+    if (allRecommendations.length === 0) {
+        throw new NoRecommendationError('Sorry, any recommendation today :(');
+    }
+
+    return allRecommendations;
+}
+
 export {
     saveRecommendation,
     upvoteRecommendation,
     downvoteRecommendation,
     getRandomRecommendation,
+    getTopRecommendations,
 };

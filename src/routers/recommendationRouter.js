@@ -16,5 +16,13 @@ router.get(
     '/recommendations/random',
     recommendationController.getRandomRecommendations
 );
+router.get(
+    '/recommendations/top/',
+    recommendationController.getTopRecommendations
+);
+router.get(
+    '/recommendations/top/:amount',
+    recommendationController.getTopRecommendations
+);
 
 export default router;

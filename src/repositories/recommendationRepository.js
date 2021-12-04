@@ -18,8 +18,17 @@ async function editScore({ id, scoreUpdate }) {
     }
 }
 
-async function getRecommendations() {
-    const result = await connection.query(`SELECT * FROM recommendations;`);
+async function getRecommendations(amount) {
+    const baseQuery = `SELECT * FROM recommendations ORDER BY score DESC`;
+    let query = baseQuery;
+    const preparedValues = [];
+    if (amount) {
+        query += ` LIMIT $1;`;
+        preparedValues.push(amount);
+    } else {
+        query += ';';
+    }
+    const result = await connection.query(query, preparedValues);
     return result.rows;
 }
 
