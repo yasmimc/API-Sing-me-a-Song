@@ -7,8 +7,8 @@
     "scripts": {
         "start": "node ./src/server.js",
         "dev": "nodemon ./src/server.js",
-        "test": "npx jest",
-        "test:watch": "npx jest --watchAll"
+        "test": "SET NODE_OPTIONS=--experimental-vm-modules && npx jest",
+        "test:watch": "SET NODE_OPTIONS=--experimental-vm-modules && npx jest --watchAll"
     },
     "keywords": [],
     "author": "",
