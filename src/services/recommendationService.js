@@ -43,6 +43,12 @@ async function downvoteRecommendation({ id }) {
     }
 }
 
+function getValidRecommendations({ recommendations }) {
+    return recommendations.filter(
+        (recommendation) => recommendation.score >= -5
+    );
+}
+
 async function getAllRecommendations(amount) {
     const recommendations = await recommendationRepository.getRecommendations(
         amount
@@ -51,17 +57,30 @@ async function getAllRecommendations(amount) {
     return validRecommendations;
 }
 
+async function getRandomRecommendationByScore({ minScore, maxScore }) {
+    const filteredRecommendations =
+        await recommendationRepository.getRecommendationsByScore({
+            minScore,
+            maxScore,
+        });
+
+    if (filteredRecommendations.length === 0) {
+        return null;
+    }
+
+    const maxRandom = filteredRecommendations?.length;
+    const random = parseInt(Math.random() * maxRandom);
+    return filteredRecommendations[random];
+}
+
 async function getRandomRecommendation() {
     let random = parseInt(Math.random() * 10);
     let randomRecommendationByScore;
     if (random < 7) {
-        console.log('70%');
         randomRecommendationByScore = await getRandomRecommendationByScore({
             minScore: 11,
         });
     } else {
-        console.log('30%');
-
         randomRecommendationByScore = await getRandomRecommendationByScore({
             minScore: -5,
             maxScore: 10,
@@ -86,28 +105,6 @@ async function getRandomRecommendation() {
     const maxRandom = recommendations.length;
     random = parseInt(Math.random() * maxRandom);
     return recommendations[random];
-}
-
-function getValidRecommendations({ recommendations }) {
-    return recommendations.filter(
-        (recommendation) => recommendation.score >= -5
-    );
-}
-
-async function getRandomRecommendationByScore({ minScore, maxScore }) {
-    const filteredRecommendations =
-        await recommendationRepository.getRecommendationsByScore({
-            minScore: minScore ? minScore : null,
-            maxScore: maxScore ? maxScore : null,
-        });
-
-    if (filteredRecommendations.length === 0) {
-        return null;
-    }
-
-    const maxRandom = filteredRecommendations?.length;
-    const random = parseInt(Math.random() * maxRandom);
-    return filteredRecommendations[random];
 }
 
 async function getTopRecommendations(amount) {
