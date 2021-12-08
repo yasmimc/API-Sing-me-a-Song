@@ -3,6 +3,7 @@ import * as recommendationService from '../services/recommendationService.js';
 import UrlError from '../errors/UrlError.js';
 import RecommendationIdError from '../errors/RecommendationIdError.js';
 import NoRecommendationError from '../errors/NoRecommendationError.js';
+import ExistentRecommendationError from '../errors/ExistentRecommendationError.js';
 
 async function addRecommendation(req, res) {
     try {
@@ -19,6 +20,9 @@ async function addRecommendation(req, res) {
     } catch (error) {
         if (error instanceof UrlError) {
             return res.status(404).send(error.message);
+        }
+        if (error instanceof ExistentRecommendationError) {
+            return res.status(409).send(error.message);
         }
         res.sendStatus(500);
     }

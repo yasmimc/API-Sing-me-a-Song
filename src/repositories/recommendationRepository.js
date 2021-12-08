@@ -1,11 +1,21 @@
 import connection from '../database/connection.js';
-import RecommendationIdError from '../errors/RecommendationIdError.js';
 
 async function save({ name, youtubeLink }) {
     const result = await connection.query(
         `INSERT INTO recommendations (name, youtube_link) VALUES ($1, $2)`,
         [name, youtubeLink]
     );
+}
+
+async function findRecommendationByYoutubeLink(youtubeLink) {
+    const result = await connection.query(
+        `SELECT * FROM recommendations WHERE youtube_link = $1`,
+        [youtubeLink]
+    );
+    if (result.rowCount) {
+        return result.rows[0];
+    }
+    return null;
 }
 
 async function editScore({ id, scoreUpdate }) {
@@ -30,4 +40,4 @@ async function getRecommendations(amount) {
     return result.rows;
 }
 
-export { save, editScore, getRecommendations };
+export { save, editScore, getRecommendations, findRecommendationByYoutubeLink };

@@ -3,14 +3,24 @@ import * as recommendationRepository from '../repositories/recommendationReposit
 import NoRecommendationError from '../errors/NoRecommendationError.js';
 import RecommendationIdError from '../errors/RecommendationIdError.js';
 import axios from 'axios';
+import ExistentRecommendationError from '../errors/ExistentRecommendationError.js';
 
 async function saveRecommendation({ name, youtubeLink }) {
     try {
         await axios.get(youtubeLink);
-        recommendationRepository.save({ name, youtubeLink });
     } catch (err) {
         throw new UrlError('This video was not found');
     }
+    const existentRecommendation =
+        await recommendationRepository.findRecommendationByYoutubeLink(
+            youtubeLink
+        );
+    if (existentRecommendation?.score >= -5) {
+        throw new ExistentRecommendationError(
+            'This recommendation has already been added'
+        );
+    }
+    recommendationRepository.save({ name, youtubeLink });
 }
 
 async function upvoteRecommendation({ id }) {
