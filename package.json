@@ -8,7 +8,9 @@
         "start": "node ./src/server.js",
         "dev": "nodemon ./src/server.js",
         "test": "npx jest",
-        "test:watch": "npx jest --watchAll"
+        "test:watch": "npx jest --watchAll",
+        "test:coverage": "npx jest --coverage",
+        "test:watch-coverage": "npx jest --coverage --watchAll"
     },
     "keywords": [],
     "author": "",
@@ -18,8 +20,7 @@
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "joi": "^17.5.0",
-        "pg": "^8.7.1",
-        "url-exist": "^3.0.0"
+        "pg": "^8.7.1"
     },
     "devDependencies": {
         "@babel/plugin-transform-runtime": "^7.16.4",

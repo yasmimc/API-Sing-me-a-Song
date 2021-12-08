@@ -1,22 +1,34 @@
-import urlExist from 'url-exist';
 import UrlError from '../errors/UrlError.js';
 import * as recommendationRepository from '../repositories/recommendationRepository.js';
 import NoRecommendationError from '../errors/NoRecommendationError.js';
+import RecommendationIdError from '../errors/RecommendationIdError.js';
 
 async function saveRecommendation({ name, youtubeLink }) {
-    const exists = await urlExist(youtubeLink);
-    if (!exists) {
+    if (youtubeLink.indexOf('www.youtube.com') < 0) {
         throw new UrlError('This video was not found');
     }
+
     await recommendationRepository.save({ name, youtubeLink });
 }
 
 async function upvoteRecommendation({ id }) {
-    await recommendationRepository.editScore({ id, scoreUpdate: '+ 1' });
+    const result = await recommendationRepository.editScore({
+        id,
+        scoreUpdate: '+ 1',
+    });
+    if (result.length === 0) {
+        throw new RecommendationIdError('Recommendation not found');
+    }
 }
 
 async function downvoteRecommendation({ id }) {
-    await recommendationRepository.editScore({ id, scoreUpdate: '- 1' });
+    const result = await recommendationRepository.editScore({
+        id,
+        scoreUpdate: '- 1',
+    });
+    if (result.length === 0) {
+        throw new RecommendationIdError('Recommendation not found');
+    }
 }
 
 async function getAllRecommendations(amount) {
@@ -38,17 +50,25 @@ async function getRandomRecommendation() {
     }
 
     const random = parseInt(Math.random() * 10);
+    let randomRecommendationByScore;
     if (random < 7) {
-        return getRandomRecommendationByScore({
+        randomRecommendationByScore = getRandomRecommendationByScore({
             recommendations,
             minScore: 11,
         });
+    } else {
+        randomRecommendationByScore = getRandomRecommendationByScore({
+            recommendations,
+            minScore: -5,
+            maxScore: 10,
+        });
     }
-    return getRandomRecommendationByScore({
-        recommendations,
-        minScore: -5,
-        maxScore: 10,
-    });
+    if (randomRecommendationByScore === null) {
+        const maxRandom = recommendations.length;
+        const random = parseInt(Math.random() * maxRandom);
+        return recommendations[random];
+    }
+    return randomRecommendationByScore;
 }
 
 function getValidRecommendations({ recommendations }) {
@@ -69,9 +89,7 @@ function getRandomRecommendationByScore({
     );
 
     if (filteredRecommendations.length === 0) {
-        const maxRandom = recommendations.length;
-        const random = parseInt(Math.random() * maxRandom);
-        return recommendations[random];
+        return null;
     }
 
     const maxRandom = filteredRecommendations.length;
@@ -94,4 +112,5 @@ export {
     downvoteRecommendation,
     getRandomRecommendation,
     getTopRecommendations,
+    getRandomRecommendationByScore,
 };

@@ -13,9 +13,7 @@ async function editScore({ id, scoreUpdate }) {
         `UPDATE recommendations SET score = score ${scoreUpdate} WHERE id = $1  RETURNING *`,
         [id]
     );
-    if (result.rowCount === 0) {
-        throw new RecommendationIdError('Recommendation not found');
-    }
+    return result.rows;
 }
 
 async function getRecommendations(amount) {
