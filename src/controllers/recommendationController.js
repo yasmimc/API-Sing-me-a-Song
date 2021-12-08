@@ -58,7 +58,12 @@ async function getRandomRecommendation(req, res) {
     try {
         const recommendation =
             await recommendationService.getRandomRecommendation();
-        res.status(200).send(recommendation);
+        const body = {
+            ...recommendation,
+            youtubeLink: recommendation.youtube_link,
+        };
+        delete body.youtube_link;
+        res.status(200).send(body);
     } catch (error) {
         if (error instanceof NoRecommendationError) {
             return res.status(404).send(error.message);
@@ -72,7 +77,15 @@ async function getTopRecommendations(req, res) {
         const { amount } = req.params;
         const recommendations =
             await recommendationService.getTopRecommendations(amount);
-        res.send(recommendations);
+        const body = recommendations.map((recommendation) => {
+            const newRecommendation = {
+                ...recommendation,
+                youtubeLink: recommendation.youtube_link,
+            };
+            delete newRecommendation.youtube_link;
+            return newRecommendation;
+        });
+        res.status(200).send(body);
     } catch (error) {
         if (error instanceof NoRecommendationError) {
             return res.status(404).send(error.message);

@@ -55,10 +55,13 @@ async function getRandomRecommendation() {
     let random = parseInt(Math.random() * 10);
     let randomRecommendationByScore;
     if (random < 7) {
+        console.log('70%');
         randomRecommendationByScore = await getRandomRecommendationByScore({
             minScore: 11,
         });
     } else {
+        console.log('30%');
+
         randomRecommendationByScore = await getRandomRecommendationByScore({
             minScore: -5,
             maxScore: 10,
