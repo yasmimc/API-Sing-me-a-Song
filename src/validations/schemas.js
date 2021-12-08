@@ -12,7 +12,7 @@ const recommendations = joi.object({
     }),
     youtubeLink: joi
         .string()
-        .pattern(new RegExp(youtubeLinkRegex))
+        // .pattern(new RegExp(youtubeLinkRegex))
         .required()
         .messages({
             'string.base': `"youtubeLink" should be a type of 'text'`,
