@@ -14,7 +14,7 @@ router.post(
 );
 router.get(
     '/recommendations/random',
-    recommendationController.getRandomRecommendations
+    recommendationController.getRandomRecommendation
 );
 router.get(
     '/recommendations/top/',

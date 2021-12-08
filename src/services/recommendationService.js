@@ -52,35 +52,37 @@ async function getAllRecommendations(amount) {
 }
 
 async function getRandomRecommendation() {
-    const recommendations = await getAllRecommendations();
-    if (recommendations.length === 1) {
-        return recommendations[0];
+    let random = parseInt(Math.random() * 10);
+    let randomRecommendationByScore;
+    if (random < 7) {
+        randomRecommendationByScore = await getRandomRecommendationByScore({
+            minScore: 11,
+        });
+    } else {
+        randomRecommendationByScore = await getRandomRecommendationByScore({
+            minScore: -5,
+            maxScore: 10,
+        });
+    }
+
+    let recommendations;
+    if (randomRecommendationByScore === null) {
+        recommendations = await getAllRecommendations();
+    } else {
+        return randomRecommendationByScore;
     }
 
     if (recommendations.length === 0) {
         throw new NoRecommendationError('Sorry, any recommendation today :(');
     }
 
-    const random = parseInt(Math.random() * 10);
-    let randomRecommendationByScore;
-    if (random < 7) {
-        randomRecommendationByScore = getRandomRecommendationByScore({
-            recommendations,
-            minScore: 11,
-        });
-    } else {
-        randomRecommendationByScore = getRandomRecommendationByScore({
-            recommendations,
-            minScore: -5,
-            maxScore: 10,
-        });
+    if (recommendations.length === 1) {
+        return recommendations[0];
     }
-    if (randomRecommendationByScore === null) {
-        const maxRandom = recommendations.length;
-        const random = parseInt(Math.random() * maxRandom);
-        return recommendations[random];
-    }
-    return randomRecommendationByScore;
+
+    const maxRandom = recommendations.length;
+    random = parseInt(Math.random() * maxRandom);
+    return recommendations[random];
 }
 
 function getValidRecommendations({ recommendations }) {
@@ -89,22 +91,18 @@ function getValidRecommendations({ recommendations }) {
     );
 }
 
-function getRandomRecommendationByScore({
-    recommendations,
-    minScore,
-    maxScore,
-}) {
-    const filteredRecommendations = recommendations.filter(
-        (recommendation) =>
-            recommendation.score >= (minScore ? minScore : -Infinity) &&
-            recommendation.score <= (maxScore ? maxScore : +Infinity)
-    );
+async function getRandomRecommendationByScore({ minScore, maxScore }) {
+    const filteredRecommendations =
+        await recommendationRepository.getRecommendationsByScore({
+            minScore: minScore ? minScore : null,
+            maxScore: maxScore ? maxScore : null,
+        });
 
     if (filteredRecommendations.length === 0) {
         return null;
     }
 
-    const maxRandom = filteredRecommendations.length;
+    const maxRandom = filteredRecommendations?.length;
     const random = parseInt(Math.random() * maxRandom);
     return filteredRecommendations[random];
 }
@@ -125,4 +123,6 @@ export {
     getRandomRecommendation,
     getTopRecommendations,
     getRandomRecommendationByScore,
+    getValidRecommendations,
+    getAllRecommendations,
 };

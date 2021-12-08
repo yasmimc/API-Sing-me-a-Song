@@ -40,4 +40,32 @@ async function getRecommendations(amount) {
     return result.rows;
 }
 
-export { save, editScore, getRecommendations, findRecommendationByYoutubeLink };
+async function getRecommendationsByScore({ minScore, maxScore }) {
+    const baseQuery = `SELECT * FROM recommendations`;
+    let query = baseQuery;
+
+    const preparedValues = [];
+
+    if (minScore && maxScore) {
+        query += ` WHERE score >= $1 AND score <= $2`;
+        preparedValues.push(minScore, maxScore);
+    } else if (minScore) {
+        query += ` WHERE score >= $1`;
+        preparedValues.push(minScore);
+    } else if (maxScore) {
+        query += ` WHERE score <= $1;`;
+        preparedValues.push(maxScore);
+    } else {
+        query += `;`;
+    }
+    const result = await connection.query(query, preparedValues);
+    return result.rows;
+}
+
+export {
+    save,
+    editScore,
+    getRecommendations,
+    findRecommendationByYoutubeLink,
+    getRecommendationsByScore,
+};
