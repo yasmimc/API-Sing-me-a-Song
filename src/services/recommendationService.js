@@ -2,13 +2,15 @@ import UrlError from '../errors/UrlError.js';
 import * as recommendationRepository from '../repositories/recommendationRepository.js';
 import NoRecommendationError from '../errors/NoRecommendationError.js';
 import RecommendationIdError from '../errors/RecommendationIdError.js';
+import axios from 'axios';
 
 async function saveRecommendation({ name, youtubeLink }) {
-    if (youtubeLink.indexOf('www.youtube.com') < 0) {
+    try {
+        await axios.get(youtubeLink);
+        recommendationRepository.save({ name, youtubeLink });
+    } catch (err) {
         throw new UrlError('This video was not found');
     }
-
-    await recommendationRepository.save({ name, youtubeLink });
 }
 
 async function upvoteRecommendation({ id }) {

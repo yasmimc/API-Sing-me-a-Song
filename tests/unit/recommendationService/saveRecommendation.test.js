@@ -8,7 +8,7 @@ jest.mock('../../../src/repositories/recommendationRepository.js');
 describe('test saveRecommendation service', () => {
     it('url dont exists', async () => {
         const name = 'Música teste';
-        const youtubeLink = 'http://www.com/teste';
+        const youtubeLink = 'https://www.youtube.com/fsdfs';
 
         jest.spyOn(recommendationRepository, 'save').mockImplementation();
 
@@ -16,6 +16,7 @@ describe('test saveRecommendation service', () => {
             name,
             youtubeLink,
         });
+
         await expect(promise).rejects.toThrowError(UrlError);
     });
 
